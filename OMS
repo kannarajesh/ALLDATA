@@ -1,0 +1,105 @@
+KVM hypervisor: a beginners’ guide
+
+Tytus Kurek
+on 8 September 2021
+
+Share on:  Facebook  Twitter  LinkedIn
+Tags: cloud , hypervisor , kvm , Linux , OpenStack , Server , Virtualisation
+
+KVM (Kernel-based Virtual Machine) is the leading open source virtualisation technology for Linux. It installs natively on all Linux distributions and turns underlying physical servers into hypervisors so that they can host multiple, isolated virtual machines (VMs). KVM comes with no licenses, type-1 hypervisor capabilities and a variety of performance extensions which makes it an ideal candidate for virtualisation and cloud infrastructure implementation. But what are the benefits of KVM hypervisor and how do you get started?
+
+In the following blog, we present the beginner’s guide to KVM on Ubuntu.
+
+What is a KVM hypervisor?
+KVM hypervisor enables full virtualisation capabilities. It provides each VM with all typical services of the physical system, including virtual BIOS (basic input/output system) and virtual hardware, such as processor, memory, storage, network cards, etc. As a result, every VM completely simulates a physical machine.
+
+
+KVM is available as a Linux kernel module. It plugs directly into the kernel’s code and allows it to function as a hypervisor. Every VM runs as a separate Linux process under systemd, with dedicated virtual hardware resources attached.  KVM can only be used on a processor with hardware virtualisation extensions, such as Intel-VT or AMD-V.
+
+KVM hypervisor benefits
+The main benefit of the KVM hypervisor is its native availability on Linux. Since KVM is part of Linux, it installs natively, enabling a straightforward user experience and smooth integration. But KVM brings more benefits compared to other virtualisation technologies. Those include:
+
+Performance – One of the main drawbacks of traditional virtualisation technologies is performance degradation compared to physical machines. Since KVM is the type-1 hypervisor, it outperforms all type-2 hypervisors, ensuring near-metal performance. With KVM hypervisor VMs boot fast and achieve desired performance results.
+Scalability – As a Linux kernel module, the KVM hypervisor automatically scales to respond to heavy loads once the number of VMs increases. The KVM hypervisor also enables clustering for thousands of nodes, laying the foundations for cloud infrastructure implementation.
+Security – Since KVM is part of the Linux kernel source code, it benefits from the world’s biggest open source community collaboration, rigorous development and testing process as well as continuous security patching.
+Maturity – KVM was first created in 2006 and has continued to be actively developed since then. It is a 15-year-old project, presenting a high level of maturity. More than 1,000 developers around the world have contributed to the KVM code.
+Cost-efficiency – Last but not least, cost is a driving factor for many organisations. Since KVM is open source and available as a Linux kernel module, it comes at zero cost out of the box. Businesses can optionally subscribe to various commercial programs, such as Ubuntu Pro to receive enterprise support for their KVM-based virtualisation or cloud infrastructure.
+How to install KVM on Ubuntu 20.04
+In the following section, we present how to install KVM on Ubuntu 20.04 LTS in three simple steps.
+
+Step 1: Install the required packages
+
+On your Ubuntu 20.04 execute the following command to install the required packages:
+
+$ sudo apt -y install bridge-utils cpu-checker libvirt-clients libvirt-daemon qemu qemu-kvm
+Step 2: Check virtualisation capabilities
+
+Execute the following command to make sure your processor supports virtualisation capabilities:
+
+$ kvm-ok
+The output of this command is pretty straightforward and clearly indicates whether KVM can be used or not:
+
+INFO: /dev/kvm exists
+KVM acceleration can be used
+Step 3: Launch a VM
+
+In order to launch your first Ubuntu Server 20.04 LTS instance on KVM execute the following command:
+
+$ sudo virt-install --name ubuntu-guest --os-variant ubuntu20.04 --vcpus 2 --ram 2048 --location http://ftp.ubuntu.com/ubuntu/dists/focal/main/installer-amd64/ --network bridge=virbr0,model=virtio --graphics none --extra-args='console=ttyS0,115200n8 serial'
+This opens an interactive console that you can use to manually install the Ubuntu guest.
+
+Get started with the KVM hypervisor on Sunbeam
+The KVM hypervisors can best be experienced in conjunction with a robust cloud platform. Therefore, in the following steps, we’ll walk you through the necessary steps to install OpenStack Sunbeam on your Ubuntu machine with minimal effort. OpenStack is the world’s most popular open source cloud platform, and Sunbeam is the simplest possible way to get started with OpenStack. Sunbeam uses the KVM hypervisor underneath.
+
+Start by grabbing a fresh physical or virtual machine (yes, you can do nested virtualisation) with 4+ core amd64 CPU, 16 GB of RAM, 50 GB of storage and the latest Ubuntu Server LTS installed. Then follow the instructions below:
+
+Install OpenStack
+
+In order to install OpenStack, execute the following command:
+
+$ sudo snap install openstack
+Install dependencies
+
+In order to install all necessary dependencies, execute the following command:
+
+$ sunbeam prepare-node-script | bash -x && newgrp snap_daemon
+Bootstrap the cloud
+
+In order to bootstrap the cloud, execute the following command:
+
+$ sunbeam cluster bootstrap --accept-defaults
+This command takes a while to finish. Be patient.
+
+Configure the cloud
+
+In order to configure the cloud with default options, execute the following command:
+
+$ sunbeam configure --accept-defaults --openrc demo-openrc
+For more advanced scenarios, refer to guided installation instructions.
+
+Launch a VM
+
+In order to launch your first VM, execute the following command:
+
+$ sunbeam launch ubuntu --name test
+Sample output:
+
+Access instance with `ssh -i /home/ubuntu/.config/openstack/sunbeam ubuntu@10.20.20.16`
+At this point, the VM should be accessible over the SSH protocol. In order to connect to it, execute the command from the output:
+
+$ ssh -i /home/ubuntu/.config/openstack/sunbeam ubuntu@10.20.20.16
+That’s it. You’re connected to the VM. You can use regular shell commands to execute various tasks.
+
+$ uptime
+11:08:36 up 2 min,  1 users,  load average: 0.05, 0.05, 0.01
+
+OpenStack dashboard
+Next steps
+Now, once you’ve learned what KVM hypervisor is and how to use it on Ubuntu together with OpenStack and Sunbeam, you may be wondering what next steps you should take. Here are some useful links that might help you on this journey.
+
+Get in touch with Canonical for commercial support on Ubuntu.
+Learn virtualisation through a series of tutorials for beginners.
+Install Sunbeam on your workstation in five simple steps.
+Watch our webinar and build your own cloud in under an hour.
+Get in touch with Canonical for commercial support on Ubuntu.
+
